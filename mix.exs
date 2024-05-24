@@ -38,7 +38,7 @@ defmodule Furlex.Mixfile do
       {:floki, "~> 0.32"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.6"},
-      {:arrows, "~> 0.1"},
+      {:arrows, "~> 0.2"},
       {:untangle, "~> 0.3"},
       {:benchee, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
