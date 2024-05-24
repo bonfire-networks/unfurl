@@ -75,24 +75,26 @@ defmodule Furlex.Oembed do
   def fetch_providers(type \\ :soft)
 
   def fetch_providers(:hard) do
-    case Fetcher.fetch("https://oembed.com/providers.json") do
+     extra_providers = config(:extra_providers) || []
+
+     case Fetcher.fetch("https://oembed.com/providers.json") do
       {:ok, providers, 200} ->
 
-        with {:ok, providers} <- Jason.decode(providers) do
-          providers = prepare_providers_regexes(providers ++ config(:extra_providers))
+        with {:ok, providers} when is_list(providers) <- Jason.decode(providers) do
+          providers = prepare_providers_regexes(providers ++ extra_providers)
           info(providers, "Caching oembed providers")
           GenServer.cast(__MODULE__, {:providers, providers})
           {:ok, providers}
         else error ->
           error(error, "Could not parse oembed providers")
           # {:error, :providers_parse_error}
-          {:ok, prepare_providers_regexes(config(:extra_providers))}
+          {:ok, prepare_providers_regexes(extra_providers)}
         end
 
       other ->
         error(other, "Could not fetch oembed providers")
         # {:error, :providers_fetch_error}
-        {:ok, prepare_providers_regexes(config(:extra_providers))}
+        {:ok, prepare_providers_regexes(extra_providers)}
     end
   end
 
