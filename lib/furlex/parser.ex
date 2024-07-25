@@ -67,12 +67,12 @@ defmodule Furlex.Parser do
 
   ## Examples
 
-    iex> Application.put_env(:furlex, :group_keys?, false)
-    iex> Furlex.Parser.maybe_group_keys %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
+      iex> Application.put_env(:furlex, :group_keys?, false)
+      iex> Furlex.Parser.maybe_group_keys %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
     %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
 
-    iex> Application.put_env(:furlex, :group_keys?, true)
-    iex> Furlex.Parser.maybe_group_keys %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
+      iex> Application.put_env(:furlex, :group_keys?, true)
+      iex> Furlex.Parser.maybe_group_keys %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
     %{
       "twitter" => %{
         "app" => %{

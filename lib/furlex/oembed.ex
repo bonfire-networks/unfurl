@@ -110,10 +110,10 @@ defmodule Furlex.Oembed do
 
   ## Examples
 
-    iex> Oembed.endpoint_from_url "https://vimeo.com/88856141"
+      iex> Oembed.endpoint_from_url "https://vimeo.com/88856141"
     {:ok, "https://vimeo.com/api/oembed.json"}
 
-    iex> Oembed.endpoint_from_url "https://vimeo.com/88856141", %{"format" => "xml"}
+      iex> Oembed.endpoint_from_url "https://vimeo.com/88856141", %{"format" => "xml"}
     {:ok, "https://vimeo.com/api/oembed.xml"}
   """
   @spec endpoint_from_url(String.t(), Map.t()) :: {:ok, String.t()} | {:error, Atom.t()}
