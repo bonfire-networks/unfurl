@@ -1,10 +1,5 @@
 defmodule Furlex do
-  @moduledoc """
-  Furlex is a structured data extraction tool written in Elixir.
-
-  It currently supports unfurling oEmbed, Twitter Card, Facebook Open Graph,
-  JSON-LD and plain ole' HTML `<meta />` data out of any url you supply.
-  """
+  @moduledoc "./README.md" |> File.stream!() |> Enum.drop(1) |> Enum.join()
 
   use Application
   import Untangle
@@ -26,26 +21,33 @@ defmodule Furlex do
   @doc """
   Unfurls a url
 
-  unfurl/1 fetches oembed data if applicable to the given url's host,
-  in addition to Twitter Card, Open Graph, JSON-LD and other HTML meta tags.
+  Fetches oembed data if available, as well as the source HTML to be parsed by `unfurl_html/3`.
 
-  unfurl/2 also accepts opts as a keyword list that will be passed to the fetcher.
+  Also accepts opts as a keyword list.
   """
   @spec unfurl(String.t(), Keyword.t()) :: {:ok, Map.t()} | {:error, Atom.t()}
   def unfurl(url, opts \\ []) do
-    case fetch(url, opts) 
-          |> debug() do
+    case fetch(url, opts) do
      {:ok, {body, status_code}, oembed_meta} when is_binary(body) ->
-      unfurl_html(url, body, Enum.into(oembed_meta || %{}, %{
-        status_code: status_code
-       }), opts)
+      unfurl_html(url, body, Keyword.merge(opts, 
+      skip_oembed_fetch: true, # because already done in `fetch/2`
+      extra: Enum.into(oembed_meta || %{}, %{status_code: status_code})))
 
       other -> 
         error(other, "Could not fetch any metadata")
     end
   end
 
-  def unfurl_html(url, body, extra, opts \\ []) do
+  @doc """
+  Extracts data from the pre-fetched HTML source of a URL
+
+  Checks for Twitter Card, Open Graph, JSON-LD, rel-me, and other HTML meta tags.
+
+  Also tries to find and/or fetch (disable all with `skip_fetches: true`):
+  - a favicon (disable with `skip_favicon_fetch: true`)
+  - oembed info (disable with `skip_oembed_fetch: true`)
+  """
+  def unfurl_html(url, body, opts \\ []) do
     with {:ok, body} <- Floki.parse_document(body),
         canonical_url <- Parser.extract_canonical(body),
          {:ok, results} <- parse(
@@ -53,43 +55,42 @@ defmodule Furlex do
           opts #++ [urls: [url, canonical_url]]
          ) do
       {:ok,
-      extra
-      |> Map.merge(results || %{})
+      Map.merge(results || %{}, opts[:extra] || %{})
       |> Map.merge(%{
          canonical_url: (if canonical_url !=url, do: canonical_url),
-         favicon: maybe_favicon(url, body)
+         favicon: (if !opts[:skip_favicon_fetch] and !opts[:skip_fetches], do: maybe_favicon(url, body)),
+         oembed: opts[:extra][:oembed] || (if !opts[:skip_oembed_fetch] and !opts[:skip_fetches], do: Oembed.detect_and_fetch(url, body, opts))
        })}
     end
   end
 
   defp fetch(url, opts) do
     fetch_oembed = Task.async(Oembed, :fetch, [url, opts])
-    fetch = Task.async(Fetcher, :fetch, [url, opts])
+    fetch_html = Task.async(Fetcher, :fetch, [url, opts])
 
-    with [fetch_oembed, fetch] <- Task.yield_many([fetch_oembed, fetch], timeout: 4000, on_timeout: :kill_task) do
-      case [fetch_oembed, fetch] do
+      case Task.yield_many([fetch_oembed, fetch_html], timeout: 4000, on_timeout: :kill_task) do
         [{_fetch_oembed, {:ok, {:ok, oembed}}}, {_fetch, {:ok, {:ok, body, status_code}}}] ->
-
-        {:ok, {body, status_code}, oembed || Oembed.detect_and_fetch(url, body, opts)} # if no oembed was found from a known provider, try via the HTML
+        # oembed found + HTML fetched
+        {:ok, {body, status_code}, oembed || Oembed.detect_and_fetch(url, body, opts)} 
 
       [{_fetch_oembed, {:ok, {:ok, oembed}}}, other] ->
-        IO.warn(inspect other)
-        {:ok, {nil, nil}, oembed} #  oembed was found from a known provider
+        debug(other, "No HTML fetched")
+         # oembed was found from a known provider
+        {:ok, {nil, nil}, oembed}
 
       [other, {_fetch, {:ok, {:ok, body, status_code}}}] ->
-        IO.warn(inspect other)
-        {:ok, {body, status_code}, Oembed.detect_and_fetch(url, body, opts)} # if no oembed was found from a known provider, try via the HTML
+        debug(other, "No oembed found from known provider, try finding one in HTML")
+        {:ok, {body, status_code}, Oembed.detect_and_fetch(url, body, opts)} 
 
-      [other, other2] ->
-        IO.warn(inspect other)
-        IO.warn(inspect other2)
+      [other_oembed, other_html] ->
+        error(other_oembed, "Error fetching oembed")
+        error(other_html, "Error fetching HTML")
         {:error, :fetch_error}
 
-      end
-    else
-      other -> 
-        IO.warn(inspect other)
+      e ->
+        error(e, "Error fetching oembed or HTML")
         {:error, :fetch_error}
+
     end
   end
 

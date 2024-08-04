@@ -69,18 +69,18 @@ defmodule Furlex.Parser do
 
       iex> Application.put_env(:furlex, :group_keys?, false)
       iex> Furlex.Parser.maybe_group_keys %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
-    %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
+      %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
 
       iex> Application.put_env(:furlex, :group_keys?, true)
       iex> Furlex.Parser.maybe_group_keys %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
-    %{
-      "twitter" => %{
-        "app" => %{
-          "id" => 123,
-          "name" => "YouTube"
+      %{
+        "twitter" => %{
+          "app" => %{
+            "id" => 123,
+            "name" => "YouTube"
+          }
         }
       }
-    }
   """
   @spec maybe_group_keys(Map.t()) :: Map.t()
   def maybe_group_keys(map)
