@@ -15,8 +15,15 @@ defmodule Unfurl.Fetcher do
   Fetches a url and extracts the body
   """
   @spec fetch(String.t(), List.t()) :: {:ok, String.t(), Integer.t()} | {:error, Atom.t()}
-  def fetch(url, opts \\ []) do
-    case URI.parse(url) do
+  def fetch(url, opts \\ [])
+
+  def fetch(url, opts) when is_binary(url) do
+    URI.parse(url)
+    |> fetch(opts)
+  end
+
+  def fetch(%URI{} = url, opts) do
+    case url do
       %URI{host: nil, path: nil} ->
         warn(url, "expected a valid URI, but got")
         {:error, :invalid_uri}
@@ -28,11 +35,11 @@ defmodule Unfurl.Fetcher do
         do_fetch("http://#{url}", opts)
 
       %URI{} ->
-        do_fetch(url, opts)
+        do_fetch(to_string(url), opts)
     end
   end
 
-  defp do_fetch(url, opts \\ []) do
+  defp do_fetch(url, opts \\ []) when is_binary(url) do
     case get(url, opts) do
       {:ok, %{body: body, status: status_code}} -> {:ok, body, status_code}
       other -> other
