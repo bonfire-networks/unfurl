@@ -130,7 +130,7 @@ defmodule Unfurl do
   end
 
   def maybe_favicon(url, body) do
-    case URI.parse(url) |> debug() do
+    case URI.parse(url) do
       # %URI{host: nil, path: nil} ->
       %URI{host: nil} ->
         warn(url, "expected a valid URI, but got")
@@ -155,7 +155,12 @@ defmodule Unfurl do
         nil
 
       %URI{} ->
-        Faviconic.find(url, body)
+        with {:ok, url} <- Faviconic.find(url, body) do
+          url
+        else
+          _ ->
+            nil
+        end
     end
   end
 end

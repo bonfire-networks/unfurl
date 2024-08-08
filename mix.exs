@@ -4,7 +4,7 @@ defmodule Unfurl.Mixfile do
   def project do
     [
       app: :unfurl,
-      version: "0.6.0",
+      version: "0.6.1",
       elixir: "~> 1.10",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -63,7 +63,7 @@ defmodule Unfurl.Mixfile do
       name: :unfurl,
       files: ~w(lib mix.exs README.md LICENSE.md CHANGELOG.md),
       maintainers: ["Bonfire Networks"],
-      licenses: ["Apache 2.0"],
+      licenses: ["Apache-2.0"],
       links: %{
         "Github" => "https://github.com/bonfire-networks/unfurl",
         "Docs" => "http://hexdocs.pm/unfurl"

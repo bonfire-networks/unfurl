@@ -35,55 +35,92 @@ To unfurl a url, simply pass it to `Unfurl.unfurl/1`
 ```elixir
 iex(1)> Unfurl.unfurl "https://www.youtube.com/watch?v=Gh6H7Md_L2k"
 {:ok,
- %{canonical_url: "https://www.youtube.com/watch?v=Gh6H7Md_L2k",
-  facebook: %{"fb:app_id" => "87741124305",
-    "og:description" => "Watch the full episode: https://www.thisoldhouse.com/watch/ask-toh-future-house-offerman Ask This Old House host Kevin O’Connor visits Nick Offerman in Los A...",
-    "og:image" => "https://i.ytimg.com/vi/Gh6H7Md_L2k/maxresdefault.jpg",
-    "og:site_name" => "YouTube",
-    "og:title" => "Touring Nick Offerman’s Wood Shop", "og:type" => "video",
-    "og:url" => "https://www.youtube.com/watch?v=Gh6H7Md_L2k",
-    "og:video:height" => ["720", "720"],
-    "og:video:secure_url" => ["https://www.youtube.com/embed/Gh6H7Md_L2k",
-     "https://www.youtube.com/v/Gh6H7Md_L2k?version=3&autohide=1"],
-    "og:video:type" => ["text/html", "application/x-shockwave-flash"],
-    "og:video:url" => ["https://www.youtube.com/embed/Gh6H7Md_L2k",
-     "http://www.youtube.com/v/Gh6H7Md_L2k?version=3&autohide=1"],
-    "og:video:width" => ["1280", "1280"]},
-  json_ld: [%{"@context" => "http://schema.org", "@type" => "BreadcrumbList",
-     "itemListElement" => [%{"@type" => "ListItem",
-        "item" => %{"@id" => "http://www.youtube.com/user/thisoldhouse",
-          "name" => "This Old House"}, "position" => 1}]}],
-  oembed: %{"author_name" => "This Old House",
-    "author_url" => "https://www.youtube.com/user/thisoldhouse",
-    "height" => 270,
-    "html" => "<iframe width=\"480\" height=\"270\" src=\"https://www.youtube.com/embed/Gh6H7Md_L2k?feature=oembed\" frameborder=\"0\" gesture=\"media\" allow=\"encrypted-media\" allowfullscreen></iframe>",
-    "provider_name" => "YouTube", "provider_url" => "https://www.youtube.com/",
-    "thumbnail_height" => 360,
-    "thumbnail_url" => "https://i.ytimg.com/vi/Gh6H7Md_L2k/hqdefault.jpg",
-    "thumbnail_width" => 480, "title" => "Touring Nick Offerman’s Wood Shop",
-    "type" => "video", "version" => "1.0", "width" => 480},
-  other: %{"description" => "Watch the full episode: https://www.thisoldhouse.com/watch/ask-toh-future-house-offerman Ask This Old House host Kevin O’Connor visits Nick Offerman in Los A...",
-    "keywords" => "this old house, how-to, home improvement, Episode, TV Show, DIY, Ask This Old House, Nick Offerman, Kevin O'Connor, woodworking, wood shop",
-    "theme-color" => "#ff0000",
-    "title" => "Touring Nick Offerman’s Wood Shop"},
-  status_code: 200,
-  twitter: %{"twitter:app:id:googleplay" => "com.google.android.youtube",
-    "twitter:app:id:ipad" => "544007664",
-    "twitter:app:id:iphone" => "544007664",
-    "twitter:app:name:googleplay" => "YouTube",
-    "twitter:app:name:ipad" => "YouTube",
-    "twitter:app:name:iphone" => "YouTube",
-    "twitter:app:url:googleplay" => "https://www.youtube.com/watch?v=Gh6H7Md_L2k",
-    "twitter:app:url:ipad" => "vnd.youtube://www.youtube.com/watch?v=Gh6H7Md_L2k&feature=applinks",
-    "twitter:app:url:iphone" => "vnd.youtube://www.youtube.com/watch?v=Gh6H7Md_L2k&feature=applinks",
-    "twitter:card" => "player",
-    "twitter:description" => "Watch the full episode: https://www.thisoldhouse.com/watch/ask-toh-future-house-offerman Ask This Old House host Kevin O’Connor visits Nick Offerman in Los A...",
-    "twitter:image" => "https://i.ytimg.com/vi/Gh6H7Md_L2k/maxresdefault.jpg",
-    "twitter:player" => "https://www.youtube.com/embed/Gh6H7Md_L2k",
-    "twitter:player:height" => "720", "twitter:player:width" => "1280",
-    "twitter:site" => "@youtube",
-    "twitter:title" => "Touring Nick Offerman’s Wood Shop",
-    "twitter:url" => "https://www.youtube.com/watch?v=Gh6H7Md_L2k"}}}
+ %{
+   other: %{
+     "description" => "Ask This Old House host Kevin O’Connor visits Nick Offerman in Los Angeles to tour the comedian’s woodworking shop.SUBSCRIBE to This Old House: http://bit.ly...",
+     "keywords" => "this old house, how-to, home improvement, Episode, TV Show, DIY, Ask This Old House, Nick Offerman, Kevin O'Connor, woodworking, wood shop, Los Angeles, Comedian, This Old House, Home Improvement, DIY Ideas, Renovation, Renovation Ideas, How To Fix, How To Install, How To Build, Kevin o’connor, kevin o'connor house, kevin o'connor this old house, kevin o'connor ask this old house, kevin o'connor interview",
+     "theme-color" => "rgba(255, 255, 255, 0.98)",
+     "title" => ["Touring Nick Offerman’s Wood Shop | Ask This Old House",
+      "Touring Nick Offerman’s Wood Shop | Ask This Old House - YouTube"]
+   },
+   canonical_url: nil,
+   facebook: %{
+     "description" => "Ask This Old House host Kevin O’Connor visits Nick Offerman in Los Angeles to tour the comedian’s woodworking shop.SUBSCRIBE to This Old House: http://bit.ly...",
+     "fb" => %{"app_id" => "87741124305"},
+     "image" => %{"height" => "720", "width" => "1280"},
+     "site_name" => "YouTube",
+     "title" => "Touring Nick Offerman’s Wood Shop | Ask This Old House",
+     "type" => "video.other",
+     "url" => "https://www.youtube.com/watch?v=Gh6H7Md_L2k",
+     "video" => %{
+       "height" => "720",
+       "secure_url" => "https://www.youtube.com/embed/Gh6H7Md_L2k",
+       "type" => "text/html",
+       "url" => "https://www.youtube.com/embed/Gh6H7Md_L2k",
+       "width" => "1280"
+     }
+   },
+   twitter: %{
+     "app" => %{
+       "id" => %{
+         "googleplay" => "com.google.android.youtube",
+         "ipad" => "544007664",
+         "iphone" => "544007664"
+       },
+       "name" => %{
+         "googleplay" => "YouTube",
+         "ipad" => "YouTube",
+         "iphone" => "YouTube"
+       },
+       "url" => %{
+         "googleplay" => "https://www.youtube.com/watch?v=Gh6H7Md_L2k",
+         "ipad" => "vnd.youtube://www.youtube.com/watch?v=Gh6H7Md_L2k&feature=applinks",
+         "iphone" => "vnd.youtube://www.youtube.com/watch?v=Gh6H7Md_L2k&feature=applinks"
+       }
+     },
+     "card" => "player",
+     "description" => "Ask This Old House host Kevin O’Connor visits Nick Offerman in Los Angeles to tour the comedian’s woodworking shop.SUBSCRIBE to This Old House: http://bit.ly...",
+     "image" => "https://i.ytimg.com/vi/Gh6H7Md_L2k/maxresdefault.jpg",
+     "player" => %{"height" => "720", "width" => "1280"},
+     "site" => "@youtube",
+     "title" => "Touring Nick Offerman’s Wood Shop | Ask This Old House",
+     "url" => "https://www.youtube.com/watch?v=Gh6H7Md_L2k"
+   },
+   oembed: %{
+     "author_name" => "This Old House",
+     "author_url" => "https://www.youtube.com/@thisoldhouse",
+     "height" => 113,
+     "html" => "<iframe width=\"200\" height=\"113\" src=\"https://www.youtube.com/embed/Gh6H7Md_L2k?feature=oembed\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen title=\"Touring Nick Offerman’s Wood Shop | Ask This Old House\"></iframe>",
+     "provider_name" => "YouTube",
+     "provider_url" => "https://www.youtube.com/",
+     "thumbnail_height" => 360,
+     "thumbnail_url" => "https://i.ytimg.com/vi/Gh6H7Md_L2k/hqdefault.jpg",
+     "thumbnail_width" => 480,
+     "title" => "Touring Nick Offerman’s Wood Shop | Ask This Old House",
+     "type" => "video",
+     "version" => "1.0",
+     "width" => 200
+   },
+   json_ld: [
+     %{
+       "@context" => "http://schema.org",
+       "@type" => "BreadcrumbList",
+       "itemListElement" => [
+         %{
+           "@type" => "ListItem",
+           "item" => %{
+             "@id" => "http://www.youtube.com/@thisoldhouse",
+             "name" => "This Old House"
+           },
+           "position" => 1
+         }
+       ]
+     }
+   ],
+   status_code: 200,
+   rel_me: nil,
+   favicon: "https://www.youtube.com/s/desktop/ef8ce500/img/favicon_32x32.png"
+ }}
 ```
 
 ## Configuration
