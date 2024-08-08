@@ -1,4 +1,4 @@
-defmodule Furlex.Parser do
+defmodule Unfurl.Parser do
   @doc """
   Parses the given HTML, returning a map structure of structured
   data keys mapping to their respective values, or an error.
@@ -29,8 +29,11 @@ defmodule Furlex.Parser do
     # |> elem(1)
     |> Floki.find(match.(tag))
     |> case do
-      nil -> nil
-      [] -> nil
+      nil ->
+        nil
+
+      [] ->
+        nil
 
       elements ->
         content =
@@ -67,12 +70,12 @@ defmodule Furlex.Parser do
 
   ## Examples
 
-      iex> Application.put_env(:furlex, :group_keys?, false)
-      iex> Furlex.Parser.maybe_group_keys %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
+      iex> Application.put_env(:unfurl, :group_keys?, false)
+      iex> Unfurl.Parser.maybe_group_keys %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
       %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
 
-      iex> Application.put_env(:furlex, :group_keys?, true)
-      iex> Furlex.Parser.maybe_group_keys %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
+      iex> Application.put_env(:unfurl, :group_keys?, true)
+      iex> Unfurl.Parser.maybe_group_keys %{"twitter:app:id" => 123, "twitter:app:name" => "YouTube"}
       %{
         "twitter" => %{
           "app" => %{
@@ -86,7 +89,7 @@ defmodule Furlex.Parser do
   def maybe_group_keys(map)
 
   def maybe_group_keys(map) do
-    if Application.get_env(:furlex, :group_keys?, true) do
+    if Application.get_env(:unfurl, :group_keys?, true) do
       do_group_keys(map)
     else
       map
@@ -95,9 +98,9 @@ defmodule Furlex.Parser do
 
   defp do_group_keys(map) do
     Enum.reduce(map, %{}, fn
-        {_, v}, _acc when is_map(v) -> do_group_keys(v)
-        {k, v}, acc -> do_group_keys(k, v, acc)
-      end)
+      {_, v}, _acc when is_map(v) -> do_group_keys(v)
+      {k, v}, acc -> do_group_keys(k, v, acc)
+    end)
   end
 
   defp do_group_keys(key, value, acc) do

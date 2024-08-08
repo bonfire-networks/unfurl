@@ -1,7 +1,7 @@
-defmodule Furlex.Parser.JsonLDTest do
+defmodule Unfurl.Parser.JsonLDTest do
   use ExUnit.Case
 
-  alias Furlex.Parser.JsonLD
+  alias Unfurl.Parser.JsonLD
 
   doctest JsonLD
 

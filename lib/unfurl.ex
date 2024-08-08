@@ -1,18 +1,18 @@
-defmodule Furlex do
+defmodule Unfurl do
   @moduledoc "./README.md" |> File.stream!() |> Enum.drop(1) |> Enum.join()
 
   use Application
   import Untangle
 
-  alias Furlex.{Fetcher, Parser, Oembed}
-  alias Furlex.Parser.{Facebook, HTML, JsonLD, Twitter, RelMe}
+  alias Unfurl.{Fetcher, Parser, Oembed}
+  alias Unfurl.Parser.{Facebook, HTML, JsonLD, Twitter, RelMe}
 
   @doc false
   def start(_type, _args) do
-    opts = [strategy: :one_for_one, name: Furlex.Supervisor]
+    opts = [strategy: :one_for_one, name: Unfurl.Supervisor]
 
     children = [
-      Furlex.Oembed
+      Unfurl.Oembed
     ]
 
     Supervisor.start_link(children, opts)
@@ -28,12 +28,18 @@ defmodule Furlex do
   @spec unfurl(String.t(), Keyword.t()) :: {:ok, Map.t()} | {:error, Atom.t()}
   def unfurl(url, opts \\ []) do
     case fetch(url, opts) do
-     {:ok, {body, status_code}, oembed_meta} when is_binary(body) ->
-      unfurl_html(url, body, Keyword.merge(opts, 
-      skip_oembed_fetch: true, # because already done in `fetch/2`
-      extra: Enum.into(oembed_meta || %{}, %{status_code: status_code})))
+      {:ok, {body, status_code}, oembed_meta} when is_binary(body) ->
+        unfurl_html(
+          url,
+          body,
+          Keyword.merge(opts,
+            # because already done in `fetch/2`
+            skip_oembed_fetch: true,
+            extra: Enum.into(oembed_meta || %{}, %{status_code: status_code})
+          )
+        )
 
-      other -> 
+      other ->
         error(other, "Could not fetch any metadata")
     end
   end
@@ -49,17 +55,24 @@ defmodule Furlex do
   """
   def unfurl_html(url, body, opts \\ []) do
     with {:ok, body} <- Floki.parse_document(body),
-        canonical_url <- Parser.extract_canonical(body),
-         {:ok, results} <- parse(
-          body, 
-          opts #++ [urls: [url, canonical_url]]
-         ) do
+         canonical_url <- Parser.extract_canonical(body),
+         {:ok, results} <-
+           parse(
+             body,
+             # ++ [urls: [url, canonical_url]]
+             opts
+           ) do
       {:ok,
-      Map.merge(results || %{}, opts[:extra] || %{})
-      |> Map.merge(%{
-         canonical_url: (if canonical_url !=url, do: canonical_url),
-         favicon: (if !opts[:skip_favicon_fetch] and !opts[:skip_fetches], do: maybe_favicon(url, body)),
-         oembed: opts[:extra][:oembed] || (if !opts[:skip_oembed_fetch] and !opts[:skip_fetches], do: Oembed.detect_and_fetch(url, body, opts))
+       Map.merge(results || %{}, opts[:extra] || %{})
+       |> Map.merge(%{
+         canonical_url: if(canonical_url != url, do: canonical_url),
+         favicon:
+           if(!opts[:skip_favicon_fetch] and !opts[:skip_fetches], do: maybe_favicon(url, body)),
+         oembed:
+           opts[:extra][:oembed] ||
+             if(!opts[:skip_oembed_fetch] and !opts[:skip_fetches],
+               do: Oembed.detect_and_fetch(url, body, opts)
+             )
        })}
     end
   end
@@ -68,19 +81,19 @@ defmodule Furlex do
     fetch_oembed = Task.async(Oembed, :fetch, [url, opts])
     fetch_html = Task.async(Fetcher, :fetch, [url, opts])
 
-      case Task.yield_many([fetch_oembed, fetch_html], timeout: 4000, on_timeout: :kill_task) do
-        [{_fetch_oembed, {:ok, {:ok, oembed}}}, {_fetch, {:ok, {:ok, body, status_code}}}] ->
+    case Task.yield_many([fetch_oembed, fetch_html], timeout: 4000, on_timeout: :kill_task) do
+      [{_fetch_oembed, {:ok, {:ok, oembed}}}, {_fetch, {:ok, {:ok, body, status_code}}}] ->
         # oembed found + HTML fetched
-        {:ok, {body, status_code}, oembed || Oembed.detect_and_fetch(url, body, opts)} 
+        {:ok, {body, status_code}, oembed || Oembed.detect_and_fetch(url, body, opts)}
 
       [{_fetch_oembed, {:ok, {:ok, oembed}}}, other] ->
         debug(other, "No HTML fetched")
-         # oembed was found from a known provider
+        # oembed was found from a known provider
         {:ok, {nil, nil}, oembed}
 
       [other, {_fetch, {:ok, {:ok, body, status_code}}}] ->
         debug(other, "No oembed found from known provider, try finding one in HTML")
-        {:ok, {body, status_code}, Oembed.detect_and_fetch(url, body, opts)} 
+        {:ok, {body, status_code}, Oembed.detect_and_fetch(url, body, opts)}
 
       [other_oembed, other_html] ->
         error(other_oembed, "Error fetching oembed")
@@ -90,7 +103,6 @@ defmodule Furlex do
       e ->
         error(e, "Error fetching oembed or HTML")
         {:error, :fetch_error}
-
     end
   end
 
@@ -118,21 +130,22 @@ defmodule Furlex do
   end
 
   def maybe_favicon(url, body) do
-    if Code.ensure_loaded?(FetchFavicon) do
     case URI.parse(url) |> debug() do
       # %URI{host: nil, path: nil} ->
       %URI{host: nil} ->
         warn(url, "expected a valid URI, but got")
         debug(body)
-        with true <- body !=[],
-        {:ok, url} <- FetchFavicon.find(nil, body) do
+
+        with true <- body != [],
+             {:ok, url} <- Faviconic.find(nil, body) do
           url
-        else _ ->
-          nil
+        else
+          _ ->
+            nil
         end
 
       # %URI{scheme: nil, host: nil, path: host_detected_as_path} ->
-      #   with {:ok, url} <- FetchFavicon.find(host_detected_as_path, body) do
+      #   with {:ok, url} <- Faviconic.find(host_detected_as_path, body) do
       #   url
       # else _ ->
       #   nil
@@ -142,14 +155,7 @@ defmodule Furlex do
         nil
 
       %URI{} ->
-        FetchFavicon.find(url, body)
-
-
+        Faviconic.find(url, body)
     end
-
-      
-    end
-
   end
-
 end

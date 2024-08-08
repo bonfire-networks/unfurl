@@ -1,7 +1,7 @@
-defmodule Furlex.FetcherTest do
+defmodule Unfurl.FetcherTest do
   use ExUnit.Case
 
-  alias Furlex.Fetcher
+  alias Unfurl.Fetcher
 
   doctest Fetcher
 

@@ -1,9 +1,9 @@
-defmodule Furlex.Parser.HTMLTest do
+defmodule Unfurl.Parser.HTMLTest do
   use ExUnit.Case
 
-  alias Furlex.Parser.HTML
+  alias Unfurl.Parser.HTML
 
-  @json_library Application.get_env(:furlex, :json_library, Jason)
+  @json_library Application.get_env(:unfurl, :json_library, Jason)
 
   doctest HTML
 

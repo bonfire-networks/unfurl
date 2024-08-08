@@ -1,7 +1,7 @@
-defmodule Furlex.Parser.Facebook do
-  @behaviour Furlex.Parser
+defmodule Unfurl.Parser.Facebook do
+  @behaviour Unfurl.Parser
 
-  alias Furlex.Parser
+  alias Unfurl.Parser
 
   @tags ~w(
     fb:app_id fb:pages
@@ -32,7 +32,7 @@ defmodule Furlex.Parser.Facebook do
     meta = &"meta[property=\"#{&1}\"]"
     map = Parser.extract(tags(), html, meta)
 
-    {:ok, Map.merge(map, Map.get(map, "og", %{})) |> Map.drop(["og"]) }
+    {:ok, Map.merge(map, Map.get(map, "og", %{})) |> Map.drop(["og"])}
   end
 
   def tags do
@@ -41,5 +41,5 @@ defmodule Furlex.Parser.Facebook do
     |> Enum.uniq()
   end
 
-  defp config(key), do: Application.get_env(:furlex, __MODULE__)[key]
+  defp config(key), do: Application.get_env(:unfurl, __MODULE__)[key]
 end

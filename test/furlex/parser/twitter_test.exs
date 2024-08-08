@@ -1,7 +1,7 @@
-defmodule Furlex.Parser.TwitterTest do
+defmodule Unfurl.Parser.TwitterTest do
   use ExUnit.Case
 
-  alias Furlex.Parser.Twitter
+  alias Unfurl.Parser.Twitter
 
   doctest Twitter
 
@@ -12,8 +12,7 @@ defmodule Furlex.Parser.TwitterTest do
 
     assert {:ok,
             %{
-                "image" => "www.example.com"
-              
+              "image" => "www.example.com"
             }} == Twitter.parse(html)
   end
 end

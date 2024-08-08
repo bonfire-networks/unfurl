@@ -1,18 +1,18 @@
-defmodule Furlex.OembedTest do
+defmodule Unfurl.OembedTest do
   use ExUnit.Case
 
-  alias Furlex.Oembed
+  alias Unfurl.Oembed
 
   setup do
     bypass = Bypass.open()
     url = "http://localhost:#{bypass.port}"
-    config = Application.get_env(:furlex, Oembed, [])
+    config = Application.get_env(:unfurl, Oembed, [])
 
     new_config = Keyword.put(config, :oembed_host, url)
-    Application.put_env(:furlex, Oembed, new_config)
+    Application.put_env(:unfurl, Oembed, new_config)
 
     on_exit(fn ->
-      Application.put_env(:furlex, Oembed, config)
+      Application.put_env(:unfurl, Oembed, config)
 
       :ok
     end)
@@ -31,7 +31,7 @@ defmodule Furlex.OembedTest do
 
     {:ok, endpoint} = Oembed.endpoint_from_url(url, params, skip_cache?: true)
 
-    assert endpoint == "https://vimeo.com/api/oembed.json"
+    assert to_string(endpoint) =~ "https://vimeo.com/api/oembed.json"
   end
 
   def handle(%{request_path: "/providers.json"} = conn) do

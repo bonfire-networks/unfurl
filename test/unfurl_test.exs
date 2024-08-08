@@ -1,18 +1,18 @@
-defmodule FurlexTest do
+defmodule UnfurlTest do
   use ExUnit.Case
 
   setup do
     bypass = Bypass.open()
     url = "http://localhost:#{bypass.port}"
 
-    oembed = Furlex.Oembed
-    oembed_config = Application.get_env(:furlex, oembed, [])
+    oembed = Unfurl.Oembed
+    oembed_config = Application.get_env(:unfurl, oembed, [])
     new_config = Keyword.put(oembed_config, :oembed_host, url)
 
-    Application.put_env(:furlex, oembed, new_config)
+    Application.put_env(:unfurl, oembed, new_config)
 
     on_exit(fn ->
-      Application.put_env(:furlex, oembed, oembed_config)
+      Application.put_env(:unfurl, oembed, oembed_config)
 
       :ok
     end)
@@ -23,12 +23,14 @@ defmodule FurlexTest do
   test "unfurls a url", %{bypass: bypass, url: url} do
     Bypass.expect(bypass, &handle/1)
 
-    assert {:ok, %{} = furlex} = Furlex.unfurl(url)
+    assert {:ok, %{} = unfurl} =
+             Unfurl.unfurl(url)
+             |> IO.inspect()
 
-    assert furlex.status_code == 200
-    assert furlex.facebook["og"]["site_name"] == "Vimeo"
-    assert furlex.twitter["twitter"]["title"] == "FIDLAR - Cocaine (Feat. Nick Offerman)"
-    assert Enum.at(furlex.json_ld, 0)["@type"] == "VideoObject"
+    assert unfurl.status_code == 200
+    assert unfurl.facebook["site_name"] == "Vimeo"
+    assert unfurl.twitter["title"] == "FIDLAR - Cocaine (Feat. Nick Offerman)"
+    assert Enum.at(unfurl.json_ld, 0)["@type"] == "VideoObject"
   end
 
   def handle(%{request_path: "/providers.json"} = conn) do

@@ -1,12 +1,12 @@
-defmodule Furlex.ParserTest do
+defmodule Unfurl.ParserTest do
   use ExUnit.Case
 
-  alias Furlex.Parser
+  alias Unfurl.Parser
 
   doctest Parser
 
   setup do
-    Application.put_env(:furlex, :group_keys?, true)
+    Application.put_env(:unfurl, :group_keys?, true)
   end
 
   test "extracts tags from html" do

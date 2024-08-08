@@ -1,15 +1,15 @@
-defmodule Furlex.Fetcher do
+defmodule Unfurl.Fetcher do
   @moduledoc """
   A module for fetching body data for a given url
   """
   use Tesla
-  plug Tesla.Middleware.FollowRedirects, max_redirects: 3
+  plug(Tesla.Middleware.FollowRedirects, max_redirects: 3)
 
   import Untangle
 
-  alias Furlex.Oembed
+  alias Unfurl.Oembed
 
-  @json_library Application.get_env(:furlex, :json_library, Jason)
+  @json_library Application.get_env(:unfurl, :json_library, Jason)
 
   @doc """
   Fetches a url and extracts the body
@@ -35,11 +35,9 @@ defmodule Furlex.Fetcher do
   defp do_fetch(url, opts \\ []) do
     case get(url, opts) do
       {:ok, %{body: body, status: status_code}} -> {:ok, body, status_code}
-      other                                     -> other
+      other -> other
     end
-    rescue
-      e in ArgumentError -> error(e)
+  rescue
+    e in ArgumentError -> error(e)
   end
-
-
 end

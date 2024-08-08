@@ -1,7 +1,7 @@
-defmodule Furlex.Parser.FacebookTest do
+defmodule Unfurl.Parser.FacebookTest do
   use ExUnit.Case
 
-  alias Furlex.Parser.Facebook
+  alias Unfurl.Parser.Facebook
 
   doctest Facebook
 

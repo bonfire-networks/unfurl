@@ -1,7 +1,7 @@
-defmodule Furlex.Parser.HTML do
-  @behaviour Furlex.Parser
+defmodule Unfurl.Parser.HTML do
+  @behaviour Unfurl.Parser
 
-  alias Furlex.Parser.{Facebook, Twitter}
+  alias Unfurl.Parser.{Facebook, Twitter}
 
   @spec parse(String.t()) :: nil | {:ok, Map.t()}
   def parse(html, _opts \\ []) do
@@ -17,16 +17,17 @@ defmodule Furlex.Parser.HTML do
 
       elements ->
         {:ok,
-          elements
-          |> filter_meta()
-          |> Enum.reduce(result, &to_map/2)
-        }
+         elements
+         |> filter_meta()
+         |> Enum.reduce(result, &to_map/2)}
     end
   end
 
   defp get_title(html) do
     case Floki.find(html, "title") do
-      nil -> %{}
+      nil ->
+        %{}
+
       title ->
         case Floki.text(title, deep: false) do
           "" -> %{}

@@ -1,7 +1,7 @@
-defmodule Furlex.Parser.Twitter do
-  @behaviour Furlex.Parser
+defmodule Unfurl.Parser.Twitter do
+  @behaviour Unfurl.Parser
 
-  alias Furlex.Parser
+  alias Unfurl.Parser
 
   @tags ~w(
     twitter:card twitter:site twitter:domain twitter:url twitter:site:id
@@ -28,5 +28,5 @@ defmodule Furlex.Parser.Twitter do
     |> Enum.uniq()
   end
 
-  defp config(key), do: Application.get_env(:furlex, __MODULE__)[key]
+  defp config(key), do: Application.get_env(:unfurl, __MODULE__)[key]
 end

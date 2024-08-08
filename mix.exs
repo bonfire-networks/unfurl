@@ -1,20 +1,20 @@
-defmodule Furlex.Mixfile do
+defmodule Unfurl.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :furlex,
-      version: "0.5.0",
+      app: :unfurl,
+      version: "0.6.0",
       elixir: "~> 1.10",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
       deps: deps(),
-      name: "Furlex",
-      source_url: "https://github.com/fanhero/furlex",
+      name: "Unfurl",
+      source_url: "https://github.com/bonfire-networks/unfurl",
       docs: [
-        main: "Furlex",
+        main: "Unfurl",
         extras: ~w(README.md CHANGELOG.md)
       ]
     ]
@@ -26,7 +26,7 @@ defmodule Furlex.Mixfile do
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
     [
-      mod: {Furlex, []},
+      mod: {Unfurl, []},
       extra_applications: [:logger]
     ]
   end
@@ -34,7 +34,8 @@ defmodule Furlex.Mixfile do
   defp deps do
     [
       {:tesla, "~> 1.4"},
-      {:hackney, "~> 1.17", optional: true}, # optional, but recommended adapter for tesla
+      # optional, but recommended adapter for tesla
+      {:hackney, "~> 1.17", optional: true},
       {:floki, "~> 0.32"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.6"},
@@ -43,14 +44,14 @@ defmodule Furlex.Mixfile do
       {:benchee, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
       {:bypass, "~> 2.1", only: :test},
-      # {:fetch_favicon, "~> 0.1.3"},
-      {:fetch_favicon, git: "https://github.com/bonfire-networks/fetch_favicon"}
+      {:faviconic, "~> 0.2.1"}
+      # {:faviconic, git: "https://github.com/bonfire-networks/faviconic"}
     ]
   end
 
   defp description do
     """
-    Furlex is a structured data extraction tool written in Elixir.
+    Unfurl is a structured data extraction tool written in Elixir.
 
     It currently supports unfurling oEmbed, Twitter Card, Facebook Open Graph, JSON-LD
     and plain ole' HTML `<meta />` data out of any url you supply.
@@ -59,13 +60,13 @@ defmodule Furlex.Mixfile do
 
   defp package do
     [
-      name: :furlex,
-      files: ~w(doc lib mix.exs README.md LICENSE.md CHANGELOG.md),
-      maintainers: ["Clayton Gentry"],
+      name: :unfurl,
+      files: ~w(lib mix.exs README.md LICENSE.md CHANGELOG.md),
+      maintainers: ["Bonfire Networks"],
       licenses: ["Apache 2.0"],
       links: %{
-        "Github" => "http://github.com/claytongentry/furlex",
-        "Docs" => "http://hexdocs.pm/furlex"
+        "Github" => "https://github.com/bonfire-networks/unfurl",
+        "Docs" => "http://hexdocs.pm/unfurl"
       }
     ]
   end

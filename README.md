@@ -1,40 +1,39 @@
-# Furlex
+# Unfurl
 
-Furlex is a [structured data](https://moz.com/learn/seo/schema-structured-data) extraction tool written in Elixir.
+Unfurl is a [structured data](https://moz.com/learn/seo/schema-structured-data) extraction tool written in Elixir.
 
-It currently supports unfurling oEmbed, Twitter Card, Facebook Open Graph, JSON-LD
-and plain ole' HTML `<meta />` data out of any url you supply.
+It currently supports unfurling oEmbed, Open Graph (Facebook), Twitter Card, JSON-LD, rel-me, favicons, and plain ole' HTML `<meta />` data out of any url you supply.
 
 ## Installation
 
-Add `:furlex` to your list of dependencies in `mix.exs`:
+Add `:unfurl` to your list of dependencies in `mix.exs`:O
 
 ```elixir
 def deps do
-  [{:furlex, "~> 0.5.0"}]
+  [{:unfurl, "~> 0.6.0"}]
 end
 ```
 
-Then run `$ mix deps.get`. Also add `:furlex` to your applications list:
+Then run `$ mix deps.get`. Also add `:unfurl` to your applications list:
 
 ```elixir
 def application do
-  [applications: [:furlex]]
+  [applications: [:unfurl]]
 end
 ```
 
-[Jason](http://github.com/michalmuskala/jason) is the default json library in Furlex. You can however configure Furlex to use another library. For example:
+[Jason](http://github.com/michalmuskala/jason) is the default json library in Unfurl. You can however configure Unfurl to use another library. For example:
 
 ```elixir
-config :furlex, :json_library, YourLibraryOfChoice
+config :unfurl, :json_library, YourLibraryOfChoice
 ```
 
 ## Usage
 
-To unfurl a url, simply pass it to `Furlex.unfurl/1`
+To unfurl a url, simply pass it to `Unfurl.unfurl/1`
 
 ```elixir
-iex(1)> Furlex.unfurl "https://www.youtube.com/watch?v=Gh6H7Md_L2k"
+iex(1)> Unfurl.unfurl "https://www.youtube.com/watch?v=Gh6H7Md_L2k"
 {:ok,
  %{canonical_url: "https://www.youtube.com/watch?v=Gh6H7Md_L2k",
   facebook: %{"fb:app_id" => "87741124305",
@@ -89,26 +88,26 @@ iex(1)> Furlex.unfurl "https://www.youtube.com/watch?v=Gh6H7Md_L2k"
 
 ## Configuration
 
-Furlex accepts a few optional configuration parameters.
+Unfurl accepts a few optional configuration parameters.
 
 You may configure additional tags to capture under the Facebook
 OpenGraph and TwitterCard parsers.
 
 ```elixir
-config :furlex, Furlex.Parser.Facebook,
+config :unfurl, Unfurl.Parser.Facebook,
   tags: ~w(my:custom:facebook:tag another:custom:facebook:tag)
 
-config :furlex, Furlex.Parser.Twitter,
+config :unfurl, Unfurl.Parser.Twitter,
   tags: ~w(my:custom:twitter:tag)
 ```
 
-You may also configure the depth of the resulting Furlex map with a `:group_keys?` boolean.
+You may also configure the depth of the resulting Unfurl map with a `:group_keys?` boolean.
 
 ```elixir
-config :furlex, group_keys?: true
+config :unfurl, group_keys?: true
 ```
 
-If this option is set to false or unconfigured, Furlex will return values mapped directly beneath OpenGraph and TwitterCard keys, i.e.
+If this option is set to false or unconfigured, Unfurl will return values mapped directly beneath OpenGraph and TwitterCard keys, i.e.
 
 ```elixir
 %{twitter: %{
@@ -118,7 +117,7 @@ If this option is set to false or unconfigured, Furlex will return values mapped
 }}
 ```
 
-If true, Furlex will return values grouped into colon-delimited map structures, i.e.
+If true, Unfurl will return values grouped into colon-delimited map structures, i.e.
 
 ```elixir
 %{twitter: %{
@@ -136,7 +135,8 @@ If true, Furlex will return values grouped into colon-delimited map structures, 
 
 ## License
 
-Copyright 2017 Clayton Gentry
+Copyright 2020 Bonfire Networks
+Copyright 2017 Clayton Gentry (author of https://www.hex.pm/packages/furlex which Unfurl was forked from)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

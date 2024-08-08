@@ -4,8 +4,8 @@
 vimeo = File.read! "./test/fixtures/vimeo.html"
 
 Benchee.run(%{
-  "facebook" => fn -> Furlex.Parser.Facebook.parse(vimeo) end,
-  "twitter" => fn -> Furlex.Parser.Twitter.parse(vimeo) end,
-  "json_ld" => fn -> Furlex.Parser.JsonLD.parse(vimeo) end,
-  "html" => fn -> Furlex.Parser.HTML.parse(vimeo) end
+  "facebook" => fn -> Unfurl.Parser.Facebook.parse(vimeo) end,
+  "twitter" => fn -> Unfurl.Parser.Twitter.parse(vimeo) end,
+  "json_ld" => fn -> Unfurl.Parser.JsonLD.parse(vimeo) end,
+  "html" => fn -> Unfurl.Parser.HTML.parse(vimeo) end
 })

@@ -17,11 +17,11 @@ config :logger,
 
 # You can configure for your application as:
 #
-#     config :furlex, key: :value
+#     config :unfurl, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:furlex, :key)
+#     Application.get_env(:unfurl, :key)
 #
 # Or configure a 3rd-party app:
 #

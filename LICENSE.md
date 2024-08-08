@@ -1,3 +1,4 @@
+Copyright 2020 Bonfire Networks
 Copyright 2017 Clayton Gentry
 
 Licensed under the Apache License, Version 2.0 (the "License");

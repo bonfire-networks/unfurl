@@ -1,5 +1,9 @@
 # Changelog
 
+## v.0.6.0
+
+Forked from Furlex with many changes/additions - changelog TODO
+
 ## v.0.5.0
 
 - Updates Floki ([queer](https://github.com/queer))
@@ -41,12 +45,12 @@
 
 ## v.0.2.2
 
-- Furlex now supports passing HTTP options to Furlex.unfurl/2.
+- Unfurl now supports passing HTTP options to Unfurl.unfurl/2.
 - `:depth` config has been transformed to a `:group_keys?` boolean.
 
 ## v.0.2.1
 
-- Add status code to Furlex's return (thanks [abitdodgy](https://github.com/abitdodgy))
+- Add status code to Unfurl's return (thanks [abitdodgy](https://github.com/abitdodgy))
 - Fix compatibility with Phoenix 1.3 (thanks, again, [abitdodgy](https://github.com/abitdodgy)!)
 
 ## v.0.2.0
