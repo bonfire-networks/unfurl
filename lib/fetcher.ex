@@ -3,7 +3,7 @@ defmodule Unfurl.Fetcher do
   A module for fetching body data for a given url
   """
   use Tesla
-  plug(Tesla.Middleware.FollowRedirects, max_redirects: 3)
+  plug Tesla.Middleware.FollowRedirects, max_redirects: 5
 
   import Untangle
 
@@ -47,4 +47,6 @@ defmodule Unfurl.Fetcher do
   rescue
     e in ArgumentError -> error(e)
   end
+
+
 end

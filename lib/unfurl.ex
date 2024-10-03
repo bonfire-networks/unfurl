@@ -163,4 +163,32 @@ defmodule Unfurl do
         end
     end
   end
+
+  def url_ip_address!(url) do
+    with {:ok, ip} <- url_ip_address(url) do
+        ip
+    else _ ->
+        nil
+    end
+  end
+
+  def url_ip_address(url) do
+    uri_host(url)
+    |> domain_ip_address()
+  end
+  
+  def domain_ip_address(host) when is_binary(host) do
+    with {:ok, {:hostent, _, _, _, _, [ip_tuple|_]}} <- :inet.gethostbyname(String.to_charlist(host)) do
+        {:ok, :inet.ntoa(ip_tuple) |> to_string()}
+    else e ->
+        error(e, "DNS resolution failed")
+    end
+  end
+  def domain_ip_address(other), do: error(other, "Expected a hostname")
+
+  def uri_host(%URI{host: nil} = _url), do: nil
+  def uri_host(%URI{host: host} = _url), do: host
+  def uri_host(url) when is_binary(url) do
+    URI.parse(url) |> uri_host()
+  end
 end
