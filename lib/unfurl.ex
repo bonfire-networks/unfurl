@@ -164,6 +164,40 @@ defmodule Unfurl do
     end
   end
 
+  @doc """
+  Unshorten a URL by following redirects.
+  Returns {:ok, final_url} on success or {:error, reason} on failure.
+
+  ## Examples
+
+      iex> unshorten("https://bit.ly/example")
+      {:ok, "https://example.com/very/long/url"}
+
+  """
+  def unshorten(short_url) do
+
+    # TODO: integrate with `Unfurl.unfurl` so URL's are stored without shorteners (or at least the canonical url is added to metadata)? in which case we should avoid duplicated fetching of the head (also done by `Faviconic`) 
+
+    case Unfurl.Fetcher.head(short_url) do
+      {:ok, %{url: url} = head} ->
+        # The final URL after following redirects
+        debug(head, "headd")
+        {:ok, url}
+      
+      {:error, error} ->
+        error(error, "Failed to unshorten URL")
+    end
+  end
+
+  def unshorten!(short_url) do
+    with {:ok, url} <- unshorten(short_url) do
+        url
+    else _ ->
+        short_url
+    end
+  end
+
+
   def url_ip_address!(url) do
     with {:ok, ip} <- url_ip_address(url) do
         ip
@@ -191,4 +225,39 @@ defmodule Unfurl do
   def uri_host(url) when is_binary(url) do
     URI.parse(url) |> uri_host()
   end
+
+    @doc """
+  Apply a function from this module to a list of items concurrently.
+  Returns a list of {:ok, final_url} or {:error, reason} tuples.
+
+  ## Examples
+
+      iex> apply_many(:unshorten, ["https://bit.ly/ex1", "https://bit.ly/ex2"])
+      [
+        {:ok, "https://example.com/long/url1"},
+        {:ok, "https://example.com/long/url2"}
+      ]
+
+      iex> apply_many(:unshorten!, ["https://bit.ly/ex1", "https://bit.ly/ex2"])
+      [
+        "https://example.com/long/url1",
+        "https://example.com/long/url2"
+      ]
+
+      iex> apply_many(:unfurl, ["https://bit.ly/ex1", "https://bit.ly/ex2"], skip_oembed_fetch: true)
+      [
+        {:ok, %{oembed: nil} = _meta},
+        {:ok, %{oembed: nil} = _meta}
+      ]
+
+  """
+  def apply_many(fun, items, extra_args \\ []) when is_list(items) do
+    items
+    |> Task.async_stream(__MODULE__, fun, [extra_args], timeout: 10_000)
+    |> Enum.map(fn 
+      {:ok, result} -> result 
+      other -> error(other)
+    end)
+  end
+
 end
