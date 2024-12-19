@@ -10,13 +10,13 @@ defmodule Unfurl.Oembed do
   import Untangle
   use Arrows
 
-  @json_library Application.get_env(:unfurl, :json_library, Jason)
+  @json_library Application.compile_env(:unfurl, :json_library, Jason)
 
   @doc """
   Fetches oembed data for the given url *if* it comes from a known provider
   """
   @spec fetch(String.t(), List.t()) :: {:ok, String.t()} | {:ok, nil} | {:error, Atom.t()}
-  def fetch(url, opts \\ []) do
+  def fetch(url, _opts \\ []) do
     detect_endpoint = endpoint_from_url(url)
 
     with {:ok, endpoint} <- detect_endpoint,
@@ -39,7 +39,7 @@ defmodule Unfurl.Oembed do
   @doc """
   Looks for an oembed link in the HTML of the given url and fetches it
   """
-  def detect_and_fetch(url, html, opts \\ []) do
+  def detect_and_fetch(url, html, _opts \\ []) do
     with {:ok, endpoint} <- endpoint_from_html(html),
          {:ok, data} <- do_fetch_from_endpoint(endpoint, url) do
       data
@@ -174,12 +174,12 @@ defmodule Unfurl.Oembed do
       |> debug()
   end
 
-  defp endpoint_from_provider(%{"fetch_function" => fetch_function} = _provider, url, _params)
+  defp endpoint_from_provider(%{"fetch_function" => fetch_function} = _provider, _url, _params)
        when is_function(fetch_function) do
     fetch_function
   end
 
-  defp endpoint_from_provider(%{"fetch_function" => {mod, fun}} = _provider, url, _params) do
+  defp endpoint_from_provider(%{"fetch_function" => {mod, fun}} = _provider, _url, _params) do
     {mod, fun}
   end
 
@@ -229,7 +229,7 @@ defmodule Unfurl.Oembed do
     end)
   end
 
-  defp an_endpoint_matches?(url, _) do
+  defp an_endpoint_matches?(_url, _) do
     nil
   end
 

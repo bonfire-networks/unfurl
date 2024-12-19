@@ -7,10 +7,6 @@ defmodule Unfurl.Fetcher do
 
   import Untangle
 
-  alias Unfurl.Oembed
-
-  @json_library Application.get_env(:unfurl, :json_library, Jason)
-
   @doc """
   Fetches a url and extracts the body
   """
@@ -25,14 +21,13 @@ defmodule Unfurl.Fetcher do
   def fetch(%URI{} = url, opts) do
     case url do
       %URI{host: nil, path: nil} ->
-        warn(url, "expected a valid URI, but got")
-        {:error, :invalid_uri}
-
+        error(url, "Tried to fetch an invalid URL")
+        
       %URI{scheme: "doi"} ->
-        {:error, :invalid_uri}
+        error(url, "Tried to fetch an invalid URL")
 
       %URI{scheme: nil, host: nil, path: host_detected_as_path} ->
-        do_fetch("http://#{url}", opts)
+        do_fetch("http://#{host_detected_as_path}", opts)
 
       %URI{} ->
         do_fetch(to_string(url), opts)

@@ -1,7 +1,7 @@
 defmodule Unfurl.Parser.JsonLD do
   @behaviour Unfurl.Parser
 
-  @json_library Application.get_env(:unfurl, :json_library, Jason)
+  @json_library Application.compile_env(:unfurl, :json_library, Jason)
 
   @spec parse(String.t()) :: nil | {:ok, List.t()}
   def parse(html, _opts \\ []) do

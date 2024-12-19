@@ -3,7 +3,7 @@ defmodule Unfurl.Parser.HTMLTest do
 
   alias Unfurl.Parser.HTML
 
-  @json_library Application.get_env(:unfurl, :json_library, Jason)
+  @json_library Application.compile_env(:unfurl, :json_library, Jason)
 
   doctest HTML
 

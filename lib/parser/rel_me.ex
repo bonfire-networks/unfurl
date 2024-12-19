@@ -33,7 +33,7 @@ defmodule Unfurl.Parser.RelMe do
     end
   end
 
-  def parse(html, opts) do
+  def parse(html, _opts) do
     warn(html, "Invalid HTML")
     {:ok, nil}
   end
