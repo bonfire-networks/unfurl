@@ -41,6 +41,8 @@ defmodule Unfurl.Fetcher do
     end
   rescue
     e in ArgumentError -> error(e)
+  e in CaseClauseError -> 
+    error(e)
   end
 
 
