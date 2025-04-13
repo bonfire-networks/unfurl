@@ -40,10 +40,12 @@ defmodule Unfurl.Fetcher do
       other -> other
     end
   rescue
-    e in ArgumentError -> error(e)
-  e in CaseClauseError -> 
-    error(e)
+    e in Tesla.Mock.Error -> 
+      error(e)
+    e in ArgumentError -> 
+      error(e)
+    e in CaseClauseError -> 
+      error(e)
   end
-
 
 end
