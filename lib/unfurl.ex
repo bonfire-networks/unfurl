@@ -175,7 +175,6 @@ defmodule Unfurl do
 
   """
   def unshorten(short_url) do
-
     # TODO: integrate with `Unfurl.unfurl` so URL's are stored without shorteners (or at least the canonical url is added to metadata)? in which case we should avoid duplicated fetching of the head (also done by `Faviconic`) 
 
     case Unfurl.Fetcher.head(short_url) do
@@ -183,7 +182,7 @@ defmodule Unfurl do
         # The final URL after following redirects
         debug(head, "headd")
         {:ok, url}
-      
+
       {:error, error} ->
         error(error, "Failed to unshorten URL")
     end
@@ -191,17 +190,18 @@ defmodule Unfurl do
 
   def unshorten!(short_url) do
     with {:ok, url} <- unshorten(short_url) do
-        url
-    else _ ->
+      url
+    else
+      _ ->
         short_url
     end
   end
 
-
   def url_ip_address!(url) do
     with {:ok, ip} <- url_ip_address(url) do
-        ip
-    else _ ->
+      ip
+    else
+      _ ->
         nil
     end
   end
@@ -210,23 +210,27 @@ defmodule Unfurl do
     uri_host(url)
     |> domain_ip_address()
   end
-  
+
   def domain_ip_address(host) when is_binary(host) do
-    with {:ok, {:hostent, _, _, _, _, [ip_tuple|_]}} <- :inet.gethostbyname(String.to_charlist(host)) do
-        {:ok, :inet.ntoa(ip_tuple) |> to_string()}
-    else e ->
+    with {:ok, {:hostent, _, _, _, _, [ip_tuple | _]}} <-
+           :inet.gethostbyname(String.to_charlist(host)) do
+      {:ok, :inet.ntoa(ip_tuple) |> to_string()}
+    else
+      e ->
         error(e, "DNS resolution failed")
     end
   end
+
   def domain_ip_address(other), do: error(other, "Expected a hostname")
 
   def uri_host(%URI{host: nil} = _url), do: nil
   def uri_host(%URI{host: host} = _url), do: host
+
   def uri_host(url) when is_binary(url) do
     URI.parse(url) |> uri_host()
   end
 
-    @doc """
+  @doc """
   Apply a function from this module to a list of items concurrently.
   Returns a list of {:ok, final_url} or {:error, reason} tuples.
 
@@ -254,10 +258,9 @@ defmodule Unfurl do
   def apply_many(fun, items, extra_args \\ []) when is_list(items) do
     items
     |> Task.async_stream(__MODULE__, fun, [extra_args], timeout: 10_000)
-    |> Enum.map(fn 
-      {:ok, result} -> result 
+    |> Enum.map(fn
+      {:ok, result} -> result
       other -> error(other)
     end)
   end
-
 end

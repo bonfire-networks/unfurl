@@ -57,7 +57,11 @@ defmodule Unfurl.Tesla.Middleware.MaybeFollowRedirects do
 
           location ->
             if location in Application.get_env(:unfurl, :ignore_redirect_urls, []) do
-              warn(res, "Ignoring redirect to location in :ignore_redirect_urls config and returning previous response")
+              warn(
+                res,
+                "Ignoring redirect to location in :ignore_redirect_urls config and returning previous response"
+              )
+
               {:ok, env}
             else
               prev_uri = URI.parse(env.url)

@@ -22,7 +22,7 @@ defmodule Unfurl.Fetcher do
     case url do
       %URI{host: nil, path: nil} ->
         error(url, "Tried to fetch an invalid URL")
-        
+
       %URI{scheme: "doi"} ->
         error(url, "Tried to fetch an invalid URL")
 
@@ -40,12 +40,13 @@ defmodule Unfurl.Fetcher do
       other -> other
     end
   rescue
-    e in Tesla.Mock.Error -> 
+    e in Tesla.Mock.Error ->
       error(e)
-    e in ArgumentError -> 
+
+    e in ArgumentError ->
       error(e)
-    e in CaseClauseError -> 
+
+    e in CaseClauseError ->
       error(e)
   end
-
 end
