@@ -1,24 +1,35 @@
 defmodule Unfurl.Parser.JsonLD do
+  use Arrows
+  import Untangle
   @behaviour Unfurl.Parser
 
   @json_library Application.compile_env(:unfurl, :json_library, Jason)
 
   @spec parse(String.t()) :: nil | {:ok, List.t()}
-  def parse(html, _opts \\ []) do
+  def parse(html, _opts \\ [])
+  def parse(html, _opts) when is_binary(html) do
+    html
+    |> Floki.parse_document()
+    ~> parse()
+  end
+  def parse(html, _opts) do
     meta = "script[type=\"application/ld+json\"]"
 
     html
-    # |> Floki.parse_document()
-    # |> elem(1)
+    # |> debug("HTML elements")
     |> Floki.find(meta)
+    # |> debug("JSON-LD elements")
     |> case do
       nil ->
+        {:ok, []}
+
+      [] ->
         {:ok, []}
 
       elements ->
         json_ld =
           elements
-          |> Enum.map(&decode/1)
+          |> Enum.flat_map(&decode/1)
           |> List.flatten()
           |> Enum.uniq()
 
@@ -29,6 +40,19 @@ defmodule Unfurl.Parser.JsonLD do
   defp decode(element) do
     element
     |> Floki.text(js: true)
-    |> @json_library.decode!()
+    |> String.trim()
+    # |> debug("JSON-LD element")
+    |> safe_decode()
   end
+
+  defp safe_decode(""), do: []
+  defp safe_decode(json) do
+    case @json_library.decode(json) do
+      {:ok, data} -> List.wrap(data)
+      {:error, e} -> 
+        warn(e, "Failed to decode JSON-LD")
+        []
+    end
+  end
+
 end

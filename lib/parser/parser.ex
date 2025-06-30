@@ -1,4 +1,6 @@
 defmodule Unfurl.Parser do
+  use Arrows
+
   @doc """
   Parses the given HTML, returning a map structure of structured
   data keys mapping to their respective values, or an error.
@@ -23,10 +25,14 @@ defmodule Unfurl.Parser do
     |> maybe_group_keys()
   end
 
+  def extract(tag, html, match, extract_attr) when is_binary(html) do
+    html
+    |> Floki.parse_document()
+    ~> extract(tag, ..., match, extract_attr) 
+  end
+
   def extract(tag, html, match, extract_attr) do
     html
-    # |> Floki.parse_document()
-    # |> elem(1)
     |> Floki.find(match.(tag))
     |> case do
       nil ->
@@ -49,10 +55,13 @@ defmodule Unfurl.Parser do
 
   @doc "Extracts a canonical url from the given raw HTML"
   @spec extract_canonical(String.t()) :: nil | String.t()
+  def extract_canonical(html) when is_binary(html) do
+    html
+    |> Floki.parse_document()
+    ~> extract_canonical()
+  end
   def extract_canonical(html) do
     html
-    # |> Floki.parse_document()
-    # |> elem(1)
     |> Floki.find("link[rel=\"canonical\"]")
     |> case do
       [] ->

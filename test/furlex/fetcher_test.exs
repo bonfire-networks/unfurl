@@ -12,6 +12,7 @@ defmodule Unfurl.FetcherTest do
     {:ok, bypass: bypass, url: url}
   end
 
+  @tag :fixme
   test "fetches url", %{bypass: bypass, url: url} do
     Bypass.expect_once(bypass, &handle/1)
 

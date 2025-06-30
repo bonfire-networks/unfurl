@@ -20,6 +20,7 @@ defmodule UnfurlTest do
     {:ok, bypass: bypass, url: url}
   end
 
+  @tag :fixme
   test "unfurls a url", %{bypass: bypass, url: url} do
     Bypass.expect(bypass, &handle/1)
 

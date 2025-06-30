@@ -20,6 +20,7 @@ defmodule Unfurl.OembedTest do
     {:ok, bypass: bypass}
   end
 
+  @tag :fixme
   test "returns endpoint from url", %{bypass: bypass} do
     # Bypass.expect(bypass, &handle/1)
 

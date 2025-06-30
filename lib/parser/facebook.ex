@@ -1,4 +1,5 @@
 defmodule Unfurl.Parser.Facebook do
+  use Arrows
   @behaviour Unfurl.Parser
 
   alias Unfurl.Parser
@@ -28,7 +29,13 @@ defmodule Unfurl.Parser.Facebook do
   )
 
   @spec parse(String.t()) :: {:ok, Map.t()}
-  def parse(html, _opts \\ []) do
+  def parse(html, _opts \\ [])
+  def parse(html, _opts) when is_binary(html) do
+    html
+    |> Floki.parse_document()
+    ~> parse()
+  end
+  def parse(html, _opts) do
     meta = &"meta[property=\"#{&1}\"]"
     map = Parser.extract(tags(), html, meta)
 

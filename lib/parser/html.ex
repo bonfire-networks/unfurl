@@ -1,15 +1,20 @@
 defmodule Unfurl.Parser.HTML do
+  use Arrows
   @behaviour Unfurl.Parser
 
   alias Unfurl.Parser.{Facebook, Twitter}
 
   @spec parse(String.t()) :: nil | {:ok, Map.t()}
-  def parse(html, _opts \\ []) do
+  def parse(html, _opts \\ [])
+  def parse(html, _opts) when is_binary(html) do
+    html
+    |> Floki.parse_document()
+    ~> parse()
+  end
+  def parse(html, _opts) do
     result = get_title(html)
 
     html
-    # |> Floki.parse_document()
-    # |> elem(1)
     |> Floki.find("meta[name]")
     |> case do
       nil ->
