@@ -141,7 +141,7 @@ defmodule Unfurl.Oembed do
     end
   end
 
-  defp parse_html_for_oembed(html) do
+  defp parse_html_for_oembed(html) when is_binary(html) do
     doc =
       html
       |> Floki.parse_document()
@@ -150,6 +150,8 @@ defmodule Unfurl.Oembed do
     Unfurl.Parser.extract("application/json+oembed", doc, &"link[type=\"#{&1}\"]", "href") ||
       Unfurl.Parser.extract("text/xml+oembed", doc, &"link[type=\"#{&1}\"]", "href")
   end
+  
+  defp parse_html_for_oembed(_), do: false
 
   # Maps a url to a provider, or returns nil if no such provider exists
   defp provider_from_url(url, opts) do

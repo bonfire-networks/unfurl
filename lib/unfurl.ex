@@ -39,6 +39,10 @@ defmodule Unfurl do
           )
         )
 
+      {:ok, {_body, status_code}, oembed_meta} when is_map(oembed_meta) and oembed_meta !=%{} ->
+        warn(status_code, "Could not fetch URL but got some metadata via oembed")
+        {:ok, oembed_meta}
+
       other ->
         error(other, "Could not fetch any metadata")
     end
