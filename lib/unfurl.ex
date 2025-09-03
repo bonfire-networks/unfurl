@@ -69,6 +69,7 @@ defmodule Unfurl do
       {:ok,
        Map.merge(results || %{}, opts[:extra] || %{})
        |> Map.merge(%{
+         content_type: "text/html",
          canonical_url: if(canonical_url != url, do: canonical_url),
          favicon:
            if(!opts[:skip_favicon_fetch] and !opts[:skip_fetches], do: maybe_favicon(url, body)),
