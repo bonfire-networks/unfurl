@@ -39,9 +39,12 @@ defmodule Unfurl do
           )
         )
 
-      {:ok, {_body, status_code}, oembed_meta} when is_map(oembed_meta) and oembed_meta !=%{} ->
-        warn(status_code, "Could not fetch URL but got some metadata via oembed")
-        {:ok, oembed_meta}
+      {:ok, {data, status_code}, oembed_meta} when is_map(oembed_meta) and oembed_meta !=%{} ->
+        debug(status_code, "Could not fetch URL but got some metadata via oembed")
+        {:ok, if(is_map(data), do: Map.merge(oembed_meta, data), else: oembed_meta)  |> Map.put(:status_code, status_code)}
+
+      {:ok, {data, status_code}, _} when is_map(data) ->
+        {:ok, data}
 
       other ->
         error(other, "Could not fetch any metadata")
@@ -57,7 +60,8 @@ defmodule Unfurl do
   - a favicon (disable with `skip_favicon_fetch: true`)
   - oembed info (disable with `skip_oembed_fetch: true`)
   """
-  def unfurl_html(url, body, opts \\ []) do
+  def unfurl_html(url, body, opts \\ [])
+  def unfurl_html(url, body, opts) when is_binary(body) do
     with {:ok, body} <- Floki.parse_document(body),
          canonical_url <- Parser.extract_canonical(body),
          {:ok, results} <-
@@ -84,7 +88,12 @@ defmodule Unfurl do
 
   defp fetch(url, opts) do
     fetch_oembed = Task.async(Oembed, :fetch, [url, opts])
-    fetch_html = Task.async(Fetcher, :fetch, [url, opts])
+    
+    fetch_html = if fetch_html_fn = opts[:fetch_html_fn] do
+      Task.async(fn -> fetch_html_fn.(url, opts) end)
+    else
+      Task.async(Fetcher, :fetch, [url, opts])
+    end
 
     case Task.yield_many([fetch_oembed, fetch_html], timeout: 4000, on_timeout: :kill_task) do
       [{_fetch_oembed, {:ok, {:ok, oembed}}}, {_fetch, {:ok, {:ok, body, status_code}}}] ->
