@@ -93,6 +93,10 @@ defmodule Unfurl.Parser do
           }
         }
       }
+
+      iex> Application.put_env(:unfurl, :group_keys?, true)
+      iex> Unfurl.Parser.maybe_group_keys %{"og:image" => "http://x/i.jpg", "og:image:width" => "1200"}
+      %{"og" => %{"image" => %{"url" => "http://x/i.jpg", "width" => "1200"}}}
   """
   @spec maybe_group_keys(Map.t()) :: Map.t()
   def maybe_group_keys(map)
@@ -130,6 +134,18 @@ defmodule Unfurl.Parser do
 
   defp deep_resolve(_key, left = %{}, right = %{}) do
     deep_merge(left, right)
+  end
+
+  # A bare value (e.g. `og:image`) colliding with its structured sub-properties
+  # (e.g. `og:image:width`) must not be discarded: per the OpenGraph spec the bare
+  # value is equivalent to the `:url` sub-property, so fold it in rather than letting
+  # one clobber the other (which would lose the actual image URL).
+  defp deep_resolve(_key, left, right) when is_map(left) and is_binary(right) do
+    Map.put_new(left, "url", right)
+  end
+
+  defp deep_resolve(_key, left, right) when is_binary(left) and is_map(right) do
+    Map.put_new(right, "url", left)
   end
 
   defp deep_resolve(_key, _left, right) do
