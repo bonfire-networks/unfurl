@@ -35,7 +35,7 @@ defmodule Unfurl.Mixfile do
     [
       {:tesla, "~> 1.4"},
       # optional, but recommended adapter for tesla
-      {:hackney, "~> 1.17", optional: true},
+      {:hackney, "~> 1.25", optional: true},
       {:floki, "~> 0.32"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.6"},
