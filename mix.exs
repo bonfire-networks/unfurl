@@ -40,7 +40,7 @@ defmodule Unfurl.Mixfile do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.6"},
       {:arrows, "~> 0.2"},
-      {:untangle, "~> 0.3"},
+      {:untangle, "~> 0.5"},
       {:benchee, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
       {:bypass, "~> 2.1", only: :test},
