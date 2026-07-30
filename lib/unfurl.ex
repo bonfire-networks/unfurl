@@ -151,8 +151,9 @@ defmodule Unfurl do
         debug(body)
 
         with true <- body != [],
-             {:ok, url} <- Faviconic.find(nil, body) do
-          url
+             # pass the original `url` rather than `nil`: `Faviconic.get_absolute_image_path/2` calls `URI.parse/1` on it, which raises a FunctionClauseError on nil (and that exception propagates far enough to fail a caller's whole publish). It already handles a hostless/schemeless string by returning the icon path unresolved, and an absolute `href` in the body still resolves, so this branch keeps working as intended.
+             {:ok, favicon_url} <- Faviconic.find(url, body) do
+          favicon_url
         else
           _ ->
             nil
