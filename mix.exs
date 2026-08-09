@@ -44,7 +44,7 @@ defmodule Unfurl.Mixfile do
       {:benchee, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
       {:bypass, "~> 2.1", only: :test},
-      {:faviconic, "~> 0.2.1"}
+      {:faviconic, "~> 0.3"}
       # {:faviconic, git: "https://github.com/bonfire-networks/faviconic"}
     ]
   end
