@@ -26,7 +26,7 @@ defmodule UnfurlTest do
 
     assert {:ok, %{} = unfurl} =
              Unfurl.unfurl(url)
-             |> IO.inspect()
+             
 
     assert unfurl.status_code == 200
     assert unfurl.facebook["site_name"] == "Vimeo"
