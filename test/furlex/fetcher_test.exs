@@ -8,6 +8,8 @@ defmodule Unfurl.FetcherTest do
   setup do
     bypass = Bypass.open()
     url = "http://localhost:#{bypass.port}"
+    # the test server is on loopback, which the SSRF guard otherwise refuses
+    Process.put(:ssrf_allow_hosts, ["localhost:#{bypass.port}"])
 
     {:ok, bypass: bypass, url: url}
   end

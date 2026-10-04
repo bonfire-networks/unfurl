@@ -4,6 +4,8 @@ defmodule UnfurlTest do
   setup do
     bypass = Bypass.open()
     url = "http://localhost:#{bypass.port}"
+    # the test server is on loopback, which the SSRF guard otherwise refuses
+    Process.put(:ssrf_allow_hosts, ["localhost:#{bypass.port}"])
 
     oembed = Unfurl.Oembed
     oembed_config = Application.get_env(:unfurl, oembed, [])

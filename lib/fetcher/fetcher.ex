@@ -8,6 +8,9 @@ defmodule Unfurl.Fetcher do
 
   plug Unfurl.Tesla.Middleware.MaybeFollowRedirects, max_redirects: 5
 
+  # after the redirects middleware, so every hop is checked
+  plug Unfurl.Tesla.Middleware.SSRF
+
   import Untangle
 
   @doc """

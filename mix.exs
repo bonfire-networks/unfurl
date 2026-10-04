@@ -34,6 +34,9 @@ defmodule Unfurl.Mixfile do
   defp deps do
     [
       {:tesla, "~> 1.4"},
+      # refuses private/reserved addresses on every request and redirect hop
+      {:req_ssrf, "~> 0.2"},
+      {:process_tree, "~> 0.3.0"},
       # optional, but recommended adapter for tesla
       {:hackney, "~> 1.25", optional: true},
       {:floki, "~> 0.32"},
@@ -44,7 +47,11 @@ defmodule Unfurl.Mixfile do
       {:benchee, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
       {:bypass, "~> 2.1", only: :test},
-      {:faviconic, "~> 0.3"}
+      # tests use the sibling fork when it's checked out next to this one (e.g. in bonfire-app's forks/), so they run against unreleased fixes (but not when publishing, which can't have path deps)
+      if(Mix.env() == :test and File.exists?(Path.expand("../faviconic/mix.exs", __DIR__)),
+        do: {:faviconic, path: "../faviconic"},
+        else: {:faviconic, "~> 0.3"}
+      )
       # {:faviconic, git: "https://github.com/bonfire-networks/faviconic"}
     ]
   end

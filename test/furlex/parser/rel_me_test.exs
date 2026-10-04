@@ -1,9 +1,14 @@
 defmodule Unfurl.RelMeTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   import Tesla.Mock
   import Untangle
 
   setup_all do
+    # mocks only apply with the Tesla.Mock adapter, while other tests here need the real one (config.exs) for their Bypass servers
+    adapter = Application.get_env(:tesla, :adapter)
+    Application.put_env(:tesla, :adapter, Tesla.Mock)
+    on_exit(fn -> Application.put_env(:tesla, :adapter, adapter) end)
+
     Tesla.Mock.mock_global(fn
       %{method: :get, url: url} ->
         get(url, nil, nil, nil)
