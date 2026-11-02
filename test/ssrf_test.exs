@@ -6,6 +6,8 @@ defmodule Unfurl.SSRFTest do
   """
   use ExUnit.Case, async: false
 
+  @moduletag :bypass
+
   alias Unfurl.Fetcher
 
   setup do

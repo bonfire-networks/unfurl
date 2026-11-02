@@ -1,6 +1,8 @@
 defmodule Unfurl.FetcherTest do
   use ExUnit.Case
 
+  @moduletag :bypass
+
   alias Unfurl.Fetcher
 
   doctest Fetcher

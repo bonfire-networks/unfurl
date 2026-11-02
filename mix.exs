@@ -38,10 +38,10 @@ defmodule Unfurl.Mixfile do
       {:req_ssrf, "~> 0.2"},
       {:process_tree, "~> 0.3.0"},
       # optional, but recommended adapter for tesla
-      {:hackney, "~> 1.25", optional: true},
+      {:hackney, "~> 1.25 or ~> 4.9", optional: true},
       {:floki, "~> 0.32"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.6"},
+      {:plug_cowboy, "~> 2.6", optional: true},
       {:arrows, "~> 0.2"},
       {:untangle, "~> 0.5"},
       {:benchee, "~> 1.0", only: :dev},

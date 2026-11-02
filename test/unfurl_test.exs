@@ -1,6 +1,8 @@
 defmodule UnfurlTest do
   use ExUnit.Case
 
+  @moduletag :bypass
+
   setup do
     bypass = Bypass.open()
     url = "http://localhost:#{bypass.port}"

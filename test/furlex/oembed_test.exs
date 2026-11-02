@@ -1,6 +1,8 @@
 defmodule Unfurl.OembedTest do
   use ExUnit.Case
 
+  @moduletag :bypass
+
   alias Unfurl.Oembed
 
   setup do
