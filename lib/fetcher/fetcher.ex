@@ -40,10 +40,25 @@ defmodule Unfurl.Fetcher do
     end
   end
 
+  @default_max_body_bytes 10 * 1024 * 1024
+
+  @doc "The size over which a fetched page is refused: `config :unfurl, max_body_bytes: …` (10 MB by default)."
+  def max_body_bytes, do: Application.get_env(:unfurl, :max_body_bytes, @default_max_body_bytes)
+
   defp do_fetch(url, opts \\ []) when is_binary(url) do
-    case get(url, opts) do
-      {:ok, %{body: body, status: status_code}} -> {:ok, body, status_code}
-      other -> other
+    max = max_body_bytes()
+
+    case get(url, with_adapter_option(opts, :max_body_bytes, max)) do
+      {:ok, %{body: body}} when is_binary(body) and byte_size(body) > max ->
+        # for an adapter that cannot stop reading at the limit (`Bonfire.Common.HTTP.CappedFinch` can), so it has read the body whole
+        error(max, "The response body is over the size limit")
+        {:error, :body_too_large}
+
+      {:ok, %{body: body, status: status_code}} ->
+        {:ok, body, status_code}
+
+      other ->
+        other
     end
   rescue
     e in Tesla.Mock.Error ->
@@ -54,5 +69,17 @@ defmodule Unfurl.Fetcher do
 
     e in CaseClauseError ->
       error(e)
+  end
+
+  # `:opts` are the per-request options Tesla hands to its middleware and adapter, where an adapter that supports a limit on the response size reads it
+  defp with_adapter_option(opts, key, value) do
+    Keyword.update(
+      opts,
+      :opts,
+      [adapter: [{key, value}]],
+      fn tesla_opts ->
+        Keyword.update(tesla_opts, :adapter, [{key, value}], &Keyword.put(&1, key, value))
+      end
+    )
   end
 end
